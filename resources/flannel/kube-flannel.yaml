@@ -58,6 +58,7 @@ spec:
         - name: host-cni-bin
           mountPath: /host/opt/cni/bin/
       hostNetwork: true
+      serviceAccountName: flannel
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
