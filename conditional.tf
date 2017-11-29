@@ -26,3 +26,20 @@ resource "template_dir" "calico-manifests" {
     pod_cidr    = "${var.pod_cidr}"
   }
 }
+
+resource "template_dir" "canal-manifests" {
+  count           = "${var.networking == "canal" ? 1 : 0}"
+  source_dir      = "${path.module}/resources/canal"
+  destination_dir = "${var.asset_dir}/manifests-networking"
+
+  vars {
+    calico_image     = "${var.container_images["calico"]}"
+    calico_cni_image = "${var.container_images["calico_cni"]}"
+
+    flannel_image     = "${var.container_images["flannel"]}"
+    flannel_cni_image = "${var.container_images["flannel_cni"]}"
+
+    network_mtu = "${var.network_mtu}"
+    pod_cidr    = "${var.pod_cidr}"
+  }
+}
