@@ -56,15 +56,6 @@ spec:
             # Wait for the datastore.
             - name: WAIT_FOR_DATASTORE
               value: "true"
-            # The Calico IPv4 pool CIDR (should match `--cluster-cidr`).
-            - name: CALICO_IPV4POOL_CIDR
-              value: "${pod_cidr}"
-            # Enable IPIP
-            - name: CALICO_IPV4POOL_IPIP
-              value: "Always"
-            # Enable IP-in-IP within Felix.
-            - name: FELIX_IPINIPENABLED
-              value: "true"
             # Set node name based on k8s nodeName.
             - name: NODENAME
               valueFrom:
