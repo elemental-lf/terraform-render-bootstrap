@@ -3,7 +3,7 @@
 resource "template_dir" "flannel-manifests-shared" {
   count           = "${var.networking == "flannel" || var.networking == "canal" ? 1 : 0}"
   source_dir      = "${path.module}/resources/flannel-shared"
-  destination_dir = "${var.asset_dir}/manifests-networking"
+  destination_dir = "${var.asset_dir}/manifests-flannel-shared"
 
   vars {
     flannel_image     = "${var.container_images["flannel"]}"
@@ -29,7 +29,7 @@ resource "template_dir" "flannel-manifests" {
 resource "template_dir" "calico-manifests-shared" {
   count           = "${var.networking == "calico" || var.networking == "canal" ? 1 : 0}"
   source_dir      = "${path.module}/resources/calico-shared"
-  destination_dir = "${var.asset_dir}/manifests-networking"
+  destination_dir = "${var.asset_dir}/manifests-calico-shared"
 
   vars {
     calico_image     = "${var.container_images["calico"]}"
