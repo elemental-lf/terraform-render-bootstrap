@@ -31,6 +31,7 @@ data:
     {
       "Network": "${pod_cidr}",
       "Backend": {
-        "Type": "vxlan"
+        "Type": "${flannel_backend}"
       }
     }
+  flannel_iface: "${flannel_iface}"

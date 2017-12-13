@@ -20,7 +20,8 @@ spec:
       containers:
       - name: kube-flannel
         image: ${flannel_image}
-        command: [ "/opt/bin/flanneld", "--ip-masq", "--kube-subnet-mgr", "--iface=$(POD_IP)"]
+        command: ["/bin/sh"]
+        args: ["-c", '[ -z "$FLANNEL_IFACE" ] && FLANNEL_IFACE="$POD_IP"; exec /opt/bin/flanneld --ip-masq --kube-subnet-mgr --iface="$FLANNEL_IFACE"']
         securityContext:
           privileged: true
         env:
@@ -36,6 +37,11 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: FLANNEL_IFACE
+          valueFrom:
+            configMapKeyRef:
+              name: kube-flannel-cfg
+              key: flannel_iface
         volumeMounts:
         - name: run
           mountPath: /run

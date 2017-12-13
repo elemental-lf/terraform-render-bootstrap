@@ -58,6 +58,21 @@ variable "cluster_domain_suffix" {
   default     = "cluster.local"
 }
 
+variable "flannel_backend" {
+  description = "flannel backend to use when using the flannel or canal networking provider"
+  type        = "string"
+  default     = "vxlan"
+}
+
+variable "flannel_iface" {
+  description = <<EOD
+Interface to use for host-to-host communication when using the flannel or canal networking provider.
+An empty string means that the pod IP is used. This is also the default.
+EOD
+  type        = "string"
+  default     = ""
+}
+
 variable "container_images" {
   description = "Container images to use"
   type        = "map"

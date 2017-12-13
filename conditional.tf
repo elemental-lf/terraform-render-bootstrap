@@ -8,6 +8,8 @@ resource "template_dir" "flannel-manifests-shared" {
   vars {
     flannel_image     = "${var.container_images["flannel"]}"
     flannel_cni_image = "${var.container_images["flannel_cni"]}"
+    flannel_backend   = "${var.flannel_backend}"
+    flannel_iface     = "${var.flannel_iface}"
 
     pod_cidr = "${var.pod_cidr}"
   }
