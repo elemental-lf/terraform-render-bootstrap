@@ -72,3 +72,13 @@ resource "template_dir" "canal-manifests" {
     pod_cidr    = "${var.pod_cidr}"
   }
 }
+
+resource "template_dir" "apiserver-vip-manifests" {
+  count           = "${var.apiserver_vip != "" ? 1 : 0}"
+  source_dir      = "${path.module}/resources/apiserver-vip"
+  destination_dir = "${var.asset_dir}/manifests-apiserver-vip"
+
+  vars {
+    apiserver_vip = "${var.apiserver_vip}"
+  }
+}

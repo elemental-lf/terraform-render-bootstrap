@@ -1,0 +1,97 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: kube-apiserver-vip
+  namespace: kube-system
+  labels:
+    tier: control-plane
+    k8s-app: kube-apiserver-vip
+spec:
+  selector:
+    matchLabels:
+      tier: control-plane
+      k8s-app: kube-apiserver-vip
+  template:
+    metadata:
+      labels:
+        tier: control-plane
+        k8s-app: kube-apiserver-vip
+      annotations:
+        checkpointer.alpha.coreos.com/checkpoint: "true"
+    spec:
+      hostNetwork: true
+      serviceAccount: kube-apiserver-vip
+      containers:
+        - image: docker.io/elementalnet/kube-keepalived-vip:1fb354e17607be519bd37cedb7f93f2499d12488-20171217
+          name: kube-keepalived-vip
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /lib/modules
+              name: modules
+              readOnly: true
+            - mountPath: /dev
+              name: dev
+          # use downward API
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          # to use unicast
+          args:
+            - --watch-all-namespaces=true
+            - --services-configmap=kube-system/kube-apiserver-vip-configmap
+            # Unicast uses the ip of the nodes instead of multicast
+            # This is useful if running in cloud providers (like AWS), but
+            # also a good idea with internal Linux bridges.
+            - --use-unicast=true
+            # Included keepalived at last up to release v0.11 has a problem with VRRPv3
+            # and more than three peers, so switch to v2.
+            - --vrrp-version=2
+            # Need to pick something which doesn't collide
+            - --vrid=178
+            - --logtostderr
+      initContainers:
+        - name: startup-script
+          image: docker.io/elementalnet/kube-keepalived-vip:1fb354e17607be519bd37cedb7f93f2499d12488-20171217
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          command: ["/startup-script"]
+          volumeMounts:
+            - mountPath: /lib/modules
+              name: modules
+              readOnly: true
+            - mountPath: /dev
+              name: dev
+            - mountPath: /startup-script
+              name: startup-script
+              subPath: startup-script
+      volumes:
+        - name: modules
+          hostPath:
+            path: /lib/modules
+        - name: dev
+          hostPath:
+            path: /dev
+        - name: startup-script
+          configMap:
+            name: kube-apiserver-vip-configmap-startup-script
+            defaultMode: 0755
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate

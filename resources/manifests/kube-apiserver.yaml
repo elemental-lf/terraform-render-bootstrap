@@ -27,6 +27,7 @@ spec:
         - apiserver
         - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
         - --advertise-address=$(POD_IP)
+        - --apiserver-count=${apiserver_count}
         - --allow-privileged=true
         - --anonymous-auth=false
         - --authorization-mode=RBAC
