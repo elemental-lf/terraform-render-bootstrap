@@ -46,7 +46,7 @@ spec:
                   fieldPath: metadata.namespace
           # to use unicast
           args:
-            - --services-configmap=kube-system/kube-apiserver-vip-configmap
+            - --services-configmap=$(POD_NAMESPACE)/kube-apiserver-vip-configmap
             # Unicast uses the ip of the nodes instead of multicast
             # This is useful if running in cloud providers (like AWS), but
             # also a good idea with internal Linux bridges.
