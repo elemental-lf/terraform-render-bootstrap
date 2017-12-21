@@ -23,7 +23,7 @@ spec:
       hostNetwork: true
       serviceAccount: kube-apiserver-vip
       containers:
-        - image: docker.io/elementalnet/kube-keepalived-vip:1fb354e17607be519bd37cedb7f93f2499d12488-20171217
+        - image: aledbf/kube-keepalived-vip:0.23
           name: kube-keepalived-vip
           imagePullPolicy: Always
           securityContext:
@@ -46,21 +46,17 @@ spec:
                   fieldPath: metadata.namespace
           # to use unicast
           args:
-            - --watch-all-namespaces=true
             - --services-configmap=kube-system/kube-apiserver-vip-configmap
             # Unicast uses the ip of the nodes instead of multicast
             # This is useful if running in cloud providers (like AWS), but
             # also a good idea with internal Linux bridges.
             - --use-unicast=true
-            # Included keepalived at last up to release v0.11 has a problem with VRRPv3
-            # and more than three peers, so switch to v2.
-            - --vrrp-version=2
             # Need to pick something which doesn't collide
             - --vrid=178
             - --logtostderr
       initContainers:
         - name: startup-script
-          image: docker.io/elementalnet/kube-keepalived-vip:1fb354e17607be519bd37cedb7f93f2499d12488-20171217
+          image: aledbf/kube-keepalived-vip:0.23
           imagePullPolicy: Always
           securityContext:
             privileged: true
