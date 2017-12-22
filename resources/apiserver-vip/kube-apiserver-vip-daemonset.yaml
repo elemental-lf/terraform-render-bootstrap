@@ -23,8 +23,8 @@ spec:
       hostNetwork: true
       serviceAccount: kube-apiserver-vip
       containers:
-        - image: aledbf/kube-keepalived-vip:0.23
-          name: kube-keepalived-vip
+        - name: kube-keepalived-vip
+          image: aledbf/kube-keepalived-vip:0.23
           imagePullPolicy: Always
           securityContext:
             privileged: true

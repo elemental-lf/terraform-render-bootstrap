@@ -20,6 +20,6 @@ data:
     set -o pipefail
     set -o nounset
 
-    RULE=(POSTROUTING -m ipvs --ipvs --vdir ORIGINAL --vmethod MASQ -j MASQUERADE)
+    RULE=(POSTROUTING -m addrtype \! --src-type LOCAL -m ipvs --ipvs --vdir ORIGINAL --vmethod MASQ -j MASQUERADE)
 
     iptables -t nat -C "$${RULE[@]}" 2>/dev/null || iptables -t nat -A "$${RULE[@]}"
