@@ -44,7 +44,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          # to use unicast
           args:
             - --services-configmap=$(POD_NAMESPACE)/kube-apiserver-vip-configmap
             # Unicast uses the ip of the nodes instead of multicast
@@ -54,22 +53,6 @@ spec:
             # Need to pick something which doesn't collide
             - --vrid=178
             - --logtostderr
-      initContainers:
-        - name: startup-script
-          image: aledbf/kube-keepalived-vip:0.23
-          imagePullPolicy: Always
-          securityContext:
-            privileged: true
-          command: ["/startup-script"]
-          volumeMounts:
-            - mountPath: /lib/modules
-              name: modules
-              readOnly: true
-            - mountPath: /dev
-              name: dev
-            - mountPath: /startup-script
-              name: startup-script
-              subPath: startup-script
       volumes:
         - name: modules
           hostPath:
@@ -77,10 +60,6 @@ spec:
         - name: dev
           hostPath:
             path: /dev
-        - name: startup-script
-          configMap:
-            name: kube-apiserver-vip-configmap-startup-script
-            defaultMode: 0755
       nodeSelector:
         node-role.kubernetes.io/master: ""
       tolerations:
