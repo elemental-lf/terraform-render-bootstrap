@@ -9,12 +9,14 @@ spec:
   selector:
     matchLabels:
       k8s-app: calico-node
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
         k8s-app: calico-node
-      annotations:
-        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       hostNetwork: true
       serviceAccountName: calico-node
@@ -22,9 +24,6 @@ spec:
         # Allow the pod to run on master nodes
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
-        # Mark the pod as a critical add-on for rescheduling
-        - key: "CriticalAddonsOnly"
-          operator: "Exists"
       containers:
         - name: calico-node
           image: ${calico_image}
@@ -97,7 +96,7 @@ spec:
           command: ["/install-cni.sh"]
           env:
             - name: CNI_CONF_NAME
-              value: "10-calico.conflist"
+              value: 10-calico.conflist
             - name: CNI_NETWORK_CONFIG
               valueFrom:
                 configMapKeyRef:
@@ -129,7 +128,3 @@ spec:
         - name: cni-net-dir
           hostPath:
             path: /etc/kubernetes/cni/net.d
-  updateStrategy:
-    rollingUpdate:
-      maxUnavailable: 1
-    type: RollingUpdate
