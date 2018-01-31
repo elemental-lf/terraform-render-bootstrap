@@ -71,10 +71,13 @@ resource "tls_cert_request" "apiserver" {
     "kubernetes.default",
     "kubernetes.default.svc",
     "kubernetes.default.svc.${var.cluster_domain_suffix}",
+    "localhost",
   ]
 
   ip_addresses = [
     "${cidrhost(var.service_cidr, 1)}",
+    "127.0.0.1",
+    "::1",
   ]
 }
 
