@@ -24,7 +24,7 @@ spec:
       serviceAccount: kube-apiserver-vip
       containers:
         - name: kube-keepalived-vip
-          image: aledbf/kube-keepalived-vip:0.23
+          image: ${keepalived_vip_image}
           imagePullPolicy: Always
           securityContext:
             privileged: true

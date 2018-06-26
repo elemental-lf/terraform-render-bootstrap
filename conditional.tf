@@ -80,5 +80,7 @@ resource "template_dir" "apiserver-vip-manifests" {
 
   vars {
     apiserver_vip = "${var.apiserver_vip}"
+
+    keepalived_vip_image = "${var.container_images["keepalived_vip"]}"
   }
 }
