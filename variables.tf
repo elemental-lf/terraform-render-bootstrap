@@ -36,6 +36,12 @@ variable "network_mtu" {
   default     = "1500"
 }
 
+variable "network_ip_autodetection_method" {
+  description = "Method to autodetect the host IPv4 address (applies to calico only)"
+  type        = "string"
+  default     = "first-found"
+}
+
 variable "pod_cidr" {
   description = "CIDR IP range to assign Kubernetes pods"
   type        = "string"
@@ -119,4 +125,12 @@ variable "ca_private_key" {
   description = "Existing Certificate Authority private key (required if ca_certificate is set)"
   type        = "string"
   default     = ""
+}
+
+# unofficial, temporary, may be removed without notice
+
+variable "apiserver_port" {
+  description = "kube-apiserver port"
+  type        = "string"
+  default     = "6443"
 }
