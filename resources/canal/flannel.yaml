@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: kube-flannel
@@ -17,6 +17,7 @@ spec:
         tier: node
         k8s-app: flannel
     spec:
+      serviceAccountName: flannel
       containers:
       - name: kube-flannel
         image: ${flannel_image}
@@ -45,21 +46,30 @@ spec:
         volumeMounts:
         - name: run
           mountPath: /run
+        - name: cni
+          mountPath: /etc/cni/net.d
         - name: flannel-cfg
           mountPath: /etc/kube-flannel/
       hostNetwork: true
       serviceAccountName: flannel
       tolerations:
-      - key: node-role.kubernetes.io/master
+      - effect: NoSchedule
         operator: Exists
-        effect: NoSchedule
+      - effect: NoExecute
+        operator: Exists
       volumes:
         - name: run
           hostPath:
             path: /run
+        - name: cni
+          hostPath:
+            path: /etc/kubernetes/cni/net.d
         - name: flannel-cfg
           configMap:
             name: kube-flannel-cfg
+        - name: host-cni-bin
+          hostPath:
+            path: /opt/cni/bin
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 1

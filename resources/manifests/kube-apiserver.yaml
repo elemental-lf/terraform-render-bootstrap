@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: kube-apiserver
@@ -25,7 +25,6 @@ spec:
         command:
         - /hyperkube
         - apiserver
-        - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ValidatingAdmissionWebhook,ResourceQuota,DefaultTolerationSeconds,MutatingAdmissionWebhook
         - --advertise-address=$(POD_IP)
         - --apiserver-count=${apiserver_count}
         - --endpoint-reconciler-type=lease
@@ -35,19 +34,17 @@ spec:
         - --bind-address=0.0.0.0
         - --client-ca-file=/etc/kubernetes/secrets/ca.crt
         - --cloud-provider=${cloud_provider}
+        - --enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultTolerationSeconds,DefaultStorageClass,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
         - --etcd-cafile=/etc/kubernetes/secrets/etcd-client-ca.crt
         - --etcd-certfile=/etc/kubernetes/secrets/etcd-client.crt
         - --etcd-keyfile=/etc/kubernetes/secrets/etcd-client.key
-        - --etcd-quorum-read=true
         - --etcd-servers=${etcd_servers}
-        - --insecure-port=0
         - --kubelet-client-certificate=/etc/kubernetes/secrets/apiserver.crt
         - --kubelet-client-key=/etc/kubernetes/secrets/apiserver.key
         - --secure-port=443
         - --service-account-key-file=/etc/kubernetes/secrets/service-account.pub
         - --service-cluster-ip-range=${service_cidr}
         - --storage-backend=etcd3
-        - --tls-ca-file=/etc/kubernetes/secrets/ca.crt
         - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
         - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
         env:
@@ -75,7 +72,7 @@ spec:
       volumes:
       - name: ssl-certs-host
         hostPath:
-          path: /usr/share/ca-certificates
+          path: ${trusted_certs_dir}
       - name: secrets
         secret:
           secretName: kube-apiserver
