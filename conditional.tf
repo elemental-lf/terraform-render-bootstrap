@@ -74,6 +74,28 @@ resource "template_dir" "canal-manifests" {
   }
 }
 
+resource "template_dir" "kube-router-manifests" {
+  count           = "${var.networking == "kube-router" ? 1 : 0}"
+  source_dir      = "${path.module}/resources/kube-router"
+  destination_dir = "${var.asset_dir}/manifests-networking"
+
+  vars {
+    kube_router_image = "${var.container_images["kube_router"]}"
+  }
+}
+
+resource "template_dir" "kube-proxy-manifests" {
+  count           = "${var.networking == "kube-router" ? 0 : 1}"
+  source_dir      = "${path.module}/resources/kube-proxy"
+  destination_dir = "${var.asset_dir}/manifests-kube-proxy"
+
+  vars {
+    hyperkube_image        = "${var.container_images["hyperkube"]}"
+    pod_cidr               = "${var.pod_cidr}"
+    trusted_certs_dir      = "${var.trusted_certs_dir}"
+  }
+}
+
 resource "template_dir" "apiserver-vip-manifests" {
   count           = "${var.apiserver_vip != "" ? 1 : 0}"
   source_dir      = "${path.module}/resources/apiserver-vip"
