@@ -1,0 +1,79 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: kube-apiserver-vip
+  namespace: kube-system
+  labels:
+    tier: control-plane
+    k8s-app: kube-apiserver-vip
+spec:
+  selector:
+    matchLabels:
+      tier: control-plane
+      k8s-app: kube-apiserver-vip
+  template:
+    metadata:
+      labels:
+        tier: control-plane
+        k8s-app: kube-apiserver-vip
+      annotations:
+        checkpointer.alpha.coreos.com/checkpoint: "true"
+    spec:
+      hostNetwork: true
+      serviceAccount: kube-apiserver-vip
+      containers:
+        - name: kube-keepalived-vip
+          image: ${keepalived_vip_image}
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /lib/modules
+              name: modules
+              readOnly: true
+            - mountPath: /dev
+              name: dev
+          # use downward API
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # This overrides KUBERNETES_SERVICE_HOST set by kubelet so that
+            # our controller always contacts the local apiserver but still
+            # uses the rest of the in-cluster auth config.
+            - name: KUBERNETES_SERVICE_HOST
+              value: "127.0.0.1"
+            - name: KUBERNETES_SERVICE_PORT
+              value: "${apiserver_port}"
+          args:
+            - --services-configmap=$(POD_NAMESPACE)/kube-apiserver-vip-configmap
+            # Unicast uses the ip of the nodes instead of multicast
+            # This is useful if running in cloud providers (like AWS), but
+            # also a good idea with internal Linux bridges.
+            - --use-unicast=true
+            # Need to pick something which doesn't collide
+            - --vrid=178
+            - --logtostderr
+      volumes:
+        - name: modules
+          hostPath:
+            path: /lib/modules
+        - name: dev
+          hostPath:
+            path: /dev
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate

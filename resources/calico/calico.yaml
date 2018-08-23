@@ -58,10 +58,7 @@ spec:
               value: "${pod_cidr}"
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
-              value: "Always"
-            # Enable IP-in-IP within Felix.
-            - name: FELIX_IPINIPENABLED
-              value: "true"
+              value: "${network_ipip_mode}"
             # Typha support: controlled by the ConfigMap.
             - name: FELIX_TYPHAK8SSERVICENAME
               valueFrom:

@@ -26,6 +26,8 @@ spec:
         - /hyperkube
         - apiserver
         - --advertise-address=$(POD_IP)
+        - --apiserver-count=${apiserver_count}
+        - --endpoint-reconciler-type=lease
         - --allow-privileged=true
         - --anonymous-auth=false
         - --authorization-mode=RBAC

@@ -31,7 +31,7 @@ resource "tls_self_signed_cert" "kube-ca" {
   }
 
   is_ca_certificate     = true
-  validity_period_hours = 8760
+  validity_period_hours = 175200
 
   allowed_uses = [
     "key_encipherment",
@@ -71,10 +71,13 @@ resource "tls_cert_request" "apiserver" {
     "kubernetes.default",
     "kubernetes.default.svc",
     "kubernetes.default.svc.${var.cluster_domain_suffix}",
+    "localhost",
   ]
 
   ip_addresses = [
     "${cidrhost(var.service_cidr, 1)}",
+    "127.0.0.1",
+    "::1",
   ]
 }
 
@@ -85,7 +88,7 @@ resource "tls_locally_signed_cert" "apiserver" {
   ca_private_key_pem = "${var.ca_certificate == "" ? join(" ", tls_private_key.kube-ca.*.private_key_pem) : var.ca_private_key}"
   ca_cert_pem        = "${var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem): var.ca_certificate}"
 
-  validity_period_hours = 8760
+  validity_period_hours = 175200
 
   allowed_uses = [
     "key_encipherment",
@@ -144,7 +147,7 @@ resource "tls_locally_signed_cert" "kubelet" {
   ca_private_key_pem = "${var.ca_certificate == "" ? join(" ", tls_private_key.kube-ca.*.private_key_pem) : var.ca_private_key}"
   ca_cert_pem        = "${var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate}"
 
-  validity_period_hours = 8760
+  validity_period_hours = 175200
 
   allowed_uses = [
     "key_encipherment",

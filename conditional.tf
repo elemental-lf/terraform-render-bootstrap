@@ -24,6 +24,20 @@ resource "template_dir" "calico-manifests" {
 
     network_mtu                     = "${var.network_mtu}"
     network_ip_autodetection_method = "${var.network_ip_autodetection_method}"
+    network_ipip_mode               = "${var.network_ipip_mode}"
     pod_cidr                        = "${var.pod_cidr}"
+  }
+}
+
+resource "template_dir" "apiserver-vip-manifests" {
+  count           = "${var.apiserver_vip != "" ? 1 : 0}"
+  source_dir      = "${path.module}/resources/apiserver-vip"
+  destination_dir = "${var.asset_dir}/manifests-apiserver-vip"
+
+  vars {
+    apiserver_vip  = "${var.apiserver_vip}"
+    apiserver_port = "${var.apiserver_port}"
+
+    keepalived_vip_image = "${var.container_images["keepalived_vip"]}"
   }
 }

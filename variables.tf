@@ -42,6 +42,12 @@ variable "network_ip_autodetection_method" {
   default     = "first-found"
 }
 
+variable "network_ipip_mode" {
+  description = "IPIP mode to use (applies to calico only)"
+  type        = "string"
+  default     = "always"
+}
+
 variable "pod_cidr" {
   description = "CIDR IP range to assign Kubernetes pods"
   type        = "string"
@@ -64,6 +70,12 @@ variable "cluster_domain_suffix" {
   default     = "cluster.local"
 }
 
+variable "apiserver_vip" {
+  description = "VIP to use for apiserver HA via keepalived"
+  type        = "string"
+  default     = ""
+}
+
 variable "container_images" {
   description = "Container images to use"
   type        = "map"
@@ -76,6 +88,7 @@ variable "container_images" {
     hyperkube        = "k8s.gcr.io/hyperkube:v1.11.2"
     coredns          = "k8s.gcr.io/coredns:1.1.3"
     pod_checkpointer = "quay.io/coreos/pod-checkpointer:9dc83e1ab3bc36ca25c9f7c18ddef1b91d4a0558"
+    keepalived_vip   = "aledbf/kube-keepalived-vip:0.27"
   }
 }
 
