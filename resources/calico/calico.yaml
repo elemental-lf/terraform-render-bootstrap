@@ -28,6 +28,11 @@ spec:
       containers:
         - name: calico-node
           image: ${calico_image}
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - 'echo ''hosts: files dns myhostname'' >/etc/nsswitch.conf; exec start_runit'
           env:
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
