@@ -66,9 +66,6 @@ spec:
                 configMapKeyRef:
                   name: calico-config
                   key: ipip_mode
-            # Enable IP-in-IP within Felix.
-            - name: FELIX_IPINIPENABLED
-              value: "true"
             # Set MTU for tunnel device used if ipip is enabled
             - name: FELIX_IPINIPMTU
               valueFrom:
