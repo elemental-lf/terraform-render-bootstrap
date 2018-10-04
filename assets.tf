@@ -46,6 +46,9 @@ resource "template_dir" "manifests" {
     etcd_ca_cert     = "${base64encode(tls_self_signed_cert.etcd-ca.cert_pem)}"
     etcd_client_cert = "${base64encode(tls_locally_signed_cert.client.cert_pem)}"
     etcd_client_key  = "${base64encode(tls_private_key.client.private_key_pem)}"
+
+    apiserver_extra_arguments = "${indent(8, join("\n", formatlist("- \"%s\"", var.apiserver_extra_arguments)))}"
+    apiserver_extra_secrets   = "${indent(2, join("\n", formatlist("\"%s\": \"%s\"", keys(var.apiserver_extra_secrets), values(var.apiserver_extra_secrets))))}"
   }
 }
 
