@@ -8,10 +8,8 @@ metadata:
     kubernetes.io/name: "CoreDNS"
     kubernetes.io/cluster-service: "true"
 spec:
-  # replicas: not specified here:
-  # 1. In order to make Addon Manager do not reconcile this replicas parameter.
-  # 2. Default is 1.
-  # 3. Will be tuned in real time if DNS horizontal auto-scaling is turned on.
+  # As we have no autoscaler enabled, set this to 2 to make upgrades seamless
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -30,6 +28,18 @@ spec:
       tolerations:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: k8s-app
+                  operator: In
+                  values:
+                  - coredns
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: coredns
           image: ${coredns_image}
