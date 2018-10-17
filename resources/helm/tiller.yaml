@@ -1,0 +1,61 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: helm
+    name: tiller
+  name: tiller-deploy
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: helm
+        name: tiller
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - command:
+        - /tiller
+        - --storage=secret
+        env:
+        - name: TILLER_NAMESPACE
+          value: kube-system
+        - name: TILLER_HISTORY_MAX
+          value: "0"
+        - name: TILLER_TLS_VERIFY
+          value: "1"
+        - name: TILLER_TLS_ENABLE
+          value: "1"
+        - name: TILLER_TLS_CERTS
+          value: /etc/certs
+        image: ${tiller_image}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 44135
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        name: tiller
+        ports:
+        - containerPort: 44134
+          name: tiller
+        - containerPort: 44135
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 44135
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: tiller-certs
+          readOnly: true
+      volumes:
+      - name: tiller-certs
+        secret:
+          secretName: tiller-secret

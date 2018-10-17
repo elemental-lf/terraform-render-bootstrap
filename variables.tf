@@ -89,6 +89,7 @@ variable "container_images" {
     coredns          = "k8s.gcr.io/coredns:1.2.2"
     pod_checkpointer = "quay.io/coreos/pod-checkpointer:9dc83e1ab3bc36ca25c9f7c18ddef1b91d4a0558"
     keepalived_vip   = "aledbf/kube-keepalived-vip:0.29"
+    tiller           = "gcr.io/kubernetes-helm/tiller:v2.11.0"
   }
 }
 
