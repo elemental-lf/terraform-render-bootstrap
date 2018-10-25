@@ -34,6 +34,8 @@ spec:
               readOnly: true
             - mountPath: /dev
               name: dev
+            - name: haproxy
+              mountPath: /etc/haproxy
           # use downward API
           env:
             - name: POD_NAME
@@ -44,13 +46,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            # This overrides KUBERNETES_SERVICE_HOST set by kubelet so that
-            # our controller always contacts the local apiserver but still
-            # uses the rest of the in-cluster auth config.
-            - name: KUBERNETES_SERVICE_HOST
-              value: "127.0.0.1"
-            - name: KUBERNETES_SERVICE_PORT
-              value: "${apiserver_port}"
           args:
             - --services-configmap=$(POD_NAMESPACE)/kube-apiserver-vip-configmap
             # Unicast uses the ip of the nodes instead of multicast
@@ -60,6 +55,19 @@ spec:
             # Need to pick something which doesn't collide
             - --vrid=178
             - --logtostderr
+            - --proxy-protocol-mode=true
+        - image: aledbf/haproxy-self-reload:0.1
+          name: haproxy-self-reload
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: haproxy
+              mountPath: /etc/haproxy
       volumes:
         - name: modules
           hostPath:
@@ -67,6 +75,8 @@ spec:
         - name: dev
           hostPath:
             path: /dev
+        - name: haproxy
+          emptyDir: {}
       nodeSelector:
         node-role.kubernetes.io/master: ""
       tolerations:

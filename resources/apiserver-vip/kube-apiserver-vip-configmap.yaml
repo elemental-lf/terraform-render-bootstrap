@@ -5,4 +5,4 @@ metadata:
   name: kube-apiserver-vip-configmap
   namespace: kube-system
 data:
-  ${apiserver_vip}: ""
+  ${apiserver_vip}: "default/kubernetes"
