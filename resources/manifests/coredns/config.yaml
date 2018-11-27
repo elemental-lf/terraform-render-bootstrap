@@ -8,7 +8,6 @@ data:
     .:53 {
         errors
         health
-        log
         kubernetes ${cluster_domain_suffix} ${service_cidr} {
             pods insecure
             upstream
