@@ -48,6 +48,7 @@ spec:
         - --storage-backend=etcd3
         - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
         - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
+        - --feature-gates=TTLAfterFinished=true
         ${apiserver_extra_arguments}
         env:
         - name: POD_IP
