@@ -8,7 +8,10 @@ data:
     .:53 {
         errors
         health
-        kubernetes ${cluster_domain_suffix} ${service_cidr} {
+        log . {
+            class error
+        }
+        kubernetes ${cluster_domain_suffix} in-addr.arpa ip6.arpa {
             pods insecure
             upstream
             fallthrough in-addr.arpa ip6.arpa

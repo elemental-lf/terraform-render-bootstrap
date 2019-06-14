@@ -21,12 +21,47 @@ spec:
         seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       hostNetwork: true
+      priorityClassName: system-node-critical
       serviceAccountName: calico-node
       tolerations:
         - effect: NoSchedule
           operator: Exists
         - effect: NoExecute
           operator: Exists
+      initContainers:
+        # Install Calico CNI binaries and CNI network config file on nodes
+        - name: install-cni
+          image: ${calico_cni_image}
+          command: ["/install-cni.sh"]
+          env:
+            # Name of the CNI config file to create on each node.
+            - name: CNI_CONF_NAME
+              value: "10-calico.conflist"
+            # Set node name based on k8s nodeName
+            - name: KUBERNETES_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            # Contents of the CNI config to create on each node.
+            - name: CNI_NETWORK_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: calico-config
+                  key: cni_network_config
+            - name: CNI_NET_DIR
+              value: "/etc/kubernetes/cni/net.d"
+            - name: CNI_MTU
+              valueFrom:
+                configMapKeyRef:
+                  name: calico-config
+                  key: veth_mtu
+            - name: SLEEP
+              value: "false"
+          volumeMounts:
+            - name: cni-bin-dir
+              mountPath: /host/opt/cni/bin
+            - name: cni-conf-dir
+              mountPath: /host/etc/cni/net.d
       containers:
         - name: calico-node
           image: ${calico_image}
@@ -76,9 +111,8 @@ spec:
                 configMapKeyRef:
                   name: calico-config
                   key: veth_mtu
-            # The Calico IPv4 pool CIDR (should match `--cluster-cidr`).
-            - name: CALICO_IPV4POOL_CIDR
-              value: "${pod_cidr}"
+            - name: NO_DEFAULT_POOLS
+              value: "true"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
@@ -97,7 +131,7 @@ spec:
             privileged: true
           resources:
             requests:
-              cpu: 250m
+              cpu: 150m
           livenessProbe:
             httpGet:
               path: /liveness
@@ -125,37 +159,6 @@ spec:
             - name: xtables-lock
               mountPath: /run/xtables.lock
               readOnly: false
-        # Install Calico CNI binaries and CNI network config file on nodes
-        - name: install-cni
-          image: ${calico_cni_image}
-          command: ["/install-cni.sh"]
-          env:
-            # Name of the CNI config file to create on each node.
-            - name: CNI_CONF_NAME
-              value: "10-calico.conflist"
-            # Set node name based on k8s nodeName
-            - name: KUBERNETES_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            # Contents of the CNI config to create on each node.
-            - name: CNI_NETWORK_CONFIG
-              valueFrom:
-                configMapKeyRef:
-                  name: calico-config
-                  key: cni_network_config
-            - name: CNI_NET_DIR
-              value: "/etc/kubernetes/cni/net.d"
-            - name: CNI_MTU
-              valueFrom:
-                configMapKeyRef:
-                  name: calico-config
-                  key: veth_mtu
-          volumeMounts:
-            - name: cni-bin-dir
-              mountPath: /host/opt/cni/bin
-            - name: cni-conf-dir
-              mountPath: /host/etc/cni/net.d
       terminationGracePeriodSeconds: 0
       volumes:
         # Used by calico/node

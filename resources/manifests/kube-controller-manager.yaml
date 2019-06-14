@@ -36,6 +36,17 @@ spec:
                   values:
                   - kube-controller-manager
               topologyKey: kubernetes.io/hostname
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      priorityClassName: system-cluster-critical
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      serviceAccountName: kube-controller-manager
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
       containers:
       - name: kube-controller-manager
         image: ${hyperkube_image}
@@ -47,21 +58,23 @@ spec:
         - --cloud-provider=${cloud_provider}
         - --cluster-cidr=${pod_cidr}
         - --service-cluster-ip-range=${service_cidr}
+        - --cluster-signing-cert-file=/etc/kubernetes/secrets/ca.crt
+        - --cluster-signing-key-file=/etc/kubernetes/secrets/ca.key
         - --configure-cloud-routes=false
         - --leader-elect=true
         - --flex-volume-plugin-dir=/var/lib/kubelet/volumeplugins
+        - --pod-eviction-timeout=1m
         - --root-ca-file=/etc/kubernetes/secrets/ca.crt
         - --service-account-private-key-file=/etc/kubernetes/secrets/service-account.key
         - --horizontal-pod-autoscaler-use-rest-clients=false
         livenessProbe:
           httpGet:
+            scheme: HTTPS
             path: /healthz
-            port: 10252  # Note: Using default port. Update if --port option is set differently.
+            port: 10257
           initialDelaySeconds: 15
           timeoutSeconds: 15
         volumeMounts:
-        - name: var-run-kubernetes
-          mountPath: /var/run/kubernetes
         - name: secrets
           mountPath: /etc/kubernetes/secrets
           readOnly: true
@@ -71,19 +84,7 @@ spec:
         - name: ssl-host
           mountPath: /etc/ssl/certs
           readOnly: true
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-      serviceAccountName: kube-controller-manager
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
       volumes:
-      - name: var-run-kubernetes
-        emptyDir: {}
       - name: secrets
         secret:
           secretName: kube-controller-manager
