@@ -105,8 +105,20 @@ spec:
                 configMapKeyRef:
                   name: calico-config
                   key: ipip_mode
-            # Set MTU for tunnel device used if ipip is enabled
+            # Whether Felix should enable IP-in-IP tunnel
+            - name: FELIX_IPINIPENABLED
+              value: "${ipip_enabled}"
+            # MTU to set on the IPIP tunnel (if enabled)
             - name: FELIX_IPINIPMTU
+              valueFrom:
+                configMapKeyRef:
+                  name: calico-config
+                  key: veth_mtu
+            # Whether Felix should enable VXLAN tunnel
+            - name: FELIX_VXLANENABLED
+              value: "${vxlan_enabled}"
+            # MTU to set on the VXLAN tunnel (if enabled)
+            - name: FELIX_VXLANMTU
               valueFrom:
                 configMapKeyRef:
                   name: calico-config
@@ -145,6 +157,7 @@ spec:
               command:
                 - /bin/calico-node
                 - -felix-ready
+                ${ipip_readiness}
             periodSeconds: 10
           volumeMounts:
             - name: lib-modules

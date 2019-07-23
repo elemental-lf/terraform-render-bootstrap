@@ -36,6 +36,12 @@ variable "network_mtu" {
   default     = "1500"
 }
 
+variable "network_encapsulation" {
+  description = "Network encapsulation mode either ipip or vxlan (only applies to calico)"
+  type        = "string"
+  default     = "ipip"
+}
+
 variable "network_ip_autodetection_method" {
   description = "Method to autodetect the host IPv4 address (only applies to calico)"
   type        = "string"
@@ -81,13 +87,13 @@ variable "container_images" {
   type        = "map"
 
   default = {
-    calico           = "quay.io/calico/node:v3.6.3"
-    calico_cni       = "quay.io/calico/cni:v3.6.3"
+    calico           = "quay.io/calico/node:v3.7.2"
+    calico_cni       = "quay.io/calico/cni:v3.7.2"
     flannel          = "quay.io/coreos/flannel:v0.11.0-amd64"
     flannel_cni      = "quay.io/coreos/flannel-cni:v0.3.0"
-    kube_router      = "cloudnativelabs/kube-router:v0.2.5"
-    hyperkube        = "k8s.gcr.io/hyperkube:v1.13.7"
-    coredns          = "k8s.gcr.io/coredns:1.3.1"
+    kube_router      = "cloudnativelabs/kube-router:v0.3.1"
+    hyperkube        = "k8s.gcr.io/hyperkube:v1.14.3"
+    coredns          = "k8s.gcr.io/coredns:1.5.0"
     pod_checkpointer = "quay.io/coreos/pod-checkpointer:83e25e5968391b9eb342042c435d1b3eeddb2be1"
     keepalived_vip   = "aledbf/kube-keepalived-vip:0.35"
     tiller           = "gcr.io/kubernetes-helm/tiller:v2.13.1"
@@ -106,22 +112,10 @@ variable "trusted_certs_dir" {
   default     = "/usr/share/ca-certificates"
 }
 
-variable "ca_certificate" {
-  description = "Existing PEM-encoded CA certificate (generated if blank)"
+variable "enable_aggregation" {
+  description = "Enable the Kubernetes Aggregation Layer (defaults to false, recommended)"
   type        = "string"
-  default     = ""
-}
-
-variable "ca_key_alg" {
-  description = "Algorithm used to generate ca_key (required if ca_cert is specified)"
-  type        = "string"
-  default     = "RSA"
-}
-
-variable "ca_private_key" {
-  description = "Existing Certificate Authority private key (required if ca_certificate is set)"
-  type        = "string"
-  default     = ""
+  default     = "false"
 }
 
 variable "apiserver_extra_arguments" {
