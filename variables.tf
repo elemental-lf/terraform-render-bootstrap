@@ -37,7 +37,7 @@ variable "network_mtu" {
 }
 
 variable "network_encapsulation" {
-  description = "Network encapsulation mode either ipip or vxlan (only applies to calico)"
+  description = "Network encapsulation mode ipip, vxlan or never (only applies to calico)"
   type        = "string"
   default     = "ipip"
 }
@@ -46,12 +46,6 @@ variable "network_ip_autodetection_method" {
   description = "Method to autodetect the host IPv4 address (only applies to calico)"
   type        = "string"
   default     = "first-found"
-}
-
-variable "network_ipip_mode" {
-  description = "IPIP mode to use (applies to calico only)"
-  type        = "string"
-  default     = "always"
 }
 
 variable "pod_cidr" {

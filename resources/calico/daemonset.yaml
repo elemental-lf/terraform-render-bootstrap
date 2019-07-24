@@ -99,12 +99,6 @@ spec:
               value: "autodetect"
             - name: IP_AUTODETECTION_METHOD
               value: "${network_ip_autodetection_method}"
-            # Enable IPIP
-            - name: CALICO_IPV4POOL_IPIP
-              valueFrom:
-                configMapKeyRef:
-                  name: calico-config
-                  key: ipip_mode
             # Whether Felix should enable IP-in-IP tunnel
             - name: FELIX_IPINIPENABLED
               value: "${ipip_enabled}"

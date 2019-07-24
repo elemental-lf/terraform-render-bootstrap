@@ -10,8 +10,6 @@ data:
   calico_backend: "bird"
   # Calico MTU
   veth_mtu: "${network_mtu}"
-  # Calico IPIP mode
-  ipip_mode: "${network_ipip_mode}"
   # The CNI network configuration to install on each node.
   cni_network_config: |-
     {
