@@ -16,6 +16,7 @@ spec:
         name: tiller
     spec:
       automountServiceAccountToken: true
+      serviceAccountName: tiller
       containers:
       - command:
         - /tiller
