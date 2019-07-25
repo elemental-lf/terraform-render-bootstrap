@@ -19,19 +19,18 @@ spec:
         k8s-app: kube-apiserver-vip
       annotations:
         checkpointer.alpha.coreos.com/checkpoint: "true"
+        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       hostNetwork: true
-      serviceAccount: kube-apiserver-vip
+      serviceAccountName: kube-apiserver-vip
+      priorityClassName: system-cluster-critical
       containers:
         - name: kube-keepalived-vip
           image: ${keepalived_vip_image}
           imagePullPolicy: Always
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 1937
-            initialDelaySeconds: 15
-            timeoutSeconds: 3
+          args:
+            - "--run-only"
+            - process
           securityContext:
             privileged: true
           volumeMounts:
@@ -40,8 +39,18 @@ spec:
               readOnly: true
             - mountPath: /dev
               name: dev
-            - name: haproxy
-              mountPath: /etc/haproxy
+            - mountPath: /usr/local/etc/keepalived/keepalived.conf
+              name: config
+              subPath: keepalived.conf
+            - mountPath: /check-apiserver.sh
+              name: config
+              subPath: check-apiserver.sh
+            - mountPath: /check-health.sh
+              name: config
+              subPath: check-health.sh
+            - mountPath: /keepalived-state.sh
+              name: config
+              subPath: keepalived-state.sh
           # use downward API
           env:
             - name: POD_NAME
@@ -52,31 +61,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          args:
-            - --services-configmap=$(POD_NAMESPACE)/kube-apiserver-vip-configmap
-            # Unicast uses the ip of the nodes instead of multicast
-            # This is useful if running in cloud providers (like AWS), but
-            # also a good idea with internal Linux bridges.
-            - --use-unicast=true
-            # Need to pick something which doesn't collide
-            - --vrid=178
-            - --logtostderr
-            - --proxy-protocol-mode=true
-            # HAProxy uses 1936 for stats, so we use 1936 + 1 here.
-            # Used by liveness probe above.
-            - --http-port=1937
-        - image: aledbf/haproxy-self-reload:0.1
-          name: haproxy-self-reload
           livenessProbe:
-            httpGet:
-              path: /
-              port: 1936
-              scheme: HTTP
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-          volumeMounts:
-            - name: haproxy
-              mountPath: /etc/haproxy
+            exec:
+              command:
+                - /check-health.sh
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 1
+            successThreshold: 1
       volumes:
         - name: modules
           hostPath:
@@ -84,8 +76,22 @@ spec:
         - name: dev
           hostPath:
             path: /dev
-        - name: haproxy
-          emptyDir: {}
+        - name: config
+          configMap:
+            name: kube-apiserver-vip-configmap
+            items:
+              - key: keepalived.conf
+                path: keepalived.conf
+                mode: 0444
+              - key: check-apiserver.sh
+                path: check-apiserver.sh
+                mode: 0555
+              - key: check-health.sh
+                path: check-health.sh
+                mode: 0555
+              - key: keepalived-state.sh
+                path: keepalived-state.sh
+                mode: 0555
       nodeSelector:
         node-role.kubernetes.io/master: ""
       tolerations:
