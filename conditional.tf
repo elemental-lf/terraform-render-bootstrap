@@ -48,7 +48,7 @@ resource "template_dir" "apiserver-vip-manifests" {
   source_dir      = "${path.module}/resources/apiserver-vip"
   destination_dir = "${var.asset_dir}/manifests-apiserver-vip"
 
-  vars {
+  vars = {
     apiserver_vip  = var.apiserver_vip
     apiserver_port = var.apiserver_port
 
