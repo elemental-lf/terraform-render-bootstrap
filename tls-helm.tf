@@ -1,30 +1,30 @@
 # ca.crt
 resource "local_file" "helm_ca_crt" {
-  content  = "${tls_self_signed_cert.helm_ca.cert_pem}"
+  content  = tls_self_signed_cert.helm_ca.cert_pem
   filename = "${var.asset_dir}/tls/helm/ca.crt"
 }
 
 # client.crt
 resource "local_file" "helm_client_crt" {
-  content  = "${tls_locally_signed_cert.helm_client.cert_pem}"
+  content  = tls_locally_signed_cert.helm_client.cert_pem
   filename = "${var.asset_dir}/tls/helm/client.crt"
 }
 
 # client.key
 resource "local_file" "helm_client_key" {
-  content  = "${tls_private_key.helm_client.private_key_pem}"
+  content  = tls_private_key.helm_client.private_key_pem
   filename = "${var.asset_dir}/tls/helm/client.key"
 }
 
 # tiller.crt
 resource "local_file" "tiller_crt" {
-  content  = "${tls_locally_signed_cert.tiller.cert_pem}"
+  content  = tls_locally_signed_cert.tiller.cert_pem
   filename = "${var.asset_dir}/tls/helm/tiller.crt"
 }
 
 # tiller.key
 resource "local_file" "tiller_key" {
-  content  = "${tls_private_key.tiller.private_key_pem}"
+  content  = tls_private_key.tiller.private_key_pem
   filename = "${var.asset_dir}/tls/helm/tiller.key"
 }
 
@@ -36,8 +36,8 @@ resource "tls_private_key" "helm_ca" {
 }
 
 resource "tls_self_signed_cert" "helm_ca" {
-  key_algorithm   = "${tls_private_key.helm_ca.algorithm}"
-  private_key_pem = "${tls_private_key.helm_ca.private_key_pem}"
+  key_algorithm   = tls_private_key.helm_ca.algorithm
+  private_key_pem = tls_private_key.helm_ca.private_key_pem
 
   subject {
     common_name  = "helm-ca"
@@ -60,8 +60,8 @@ resource "tls_private_key" "helm_client" {
 }
 
 resource "tls_cert_request" "helm_client" {
-  key_algorithm   = "${tls_private_key.helm_client.algorithm}"
-  private_key_pem = "${tls_private_key.helm_client.private_key_pem}"
+  key_algorithm   = tls_private_key.helm_client.algorithm
+  private_key_pem = tls_private_key.helm_client.private_key_pem
 
   subject {
     common_name  = "helm-client"
@@ -70,11 +70,11 @@ resource "tls_cert_request" "helm_client" {
 }
 
 resource "tls_locally_signed_cert" "helm_client" {
-  cert_request_pem = "${tls_cert_request.helm_client.cert_request_pem}"
+  cert_request_pem = tls_cert_request.helm_client.cert_request_pem
 
-  ca_key_algorithm   = "${join(" ", tls_self_signed_cert.helm_ca.*.key_algorithm)}"
-  ca_private_key_pem = "${join(" ", tls_private_key.helm_ca.*.private_key_pem)}"
-  ca_cert_pem        = "${join(" ", tls_self_signed_cert.helm_ca.*.cert_pem)}"
+  ca_key_algorithm   = join(" ", tls_self_signed_cert.helm_ca.*.key_algorithm)
+  ca_private_key_pem = join(" ", tls_private_key.helm_ca.*.private_key_pem)
+  ca_cert_pem        = join(" ", tls_self_signed_cert.helm_ca.*.cert_pem)
 
   validity_period_hours = 175200
 
@@ -92,8 +92,8 @@ resource "tls_private_key" "tiller" {
 }
 
 resource "tls_cert_request" "tiller" {
-  key_algorithm   = "${tls_private_key.tiller.algorithm}"
-  private_key_pem = "${tls_private_key.tiller.private_key_pem}"
+  key_algorithm   = tls_private_key.tiller.algorithm
+  private_key_pem = tls_private_key.tiller.private_key_pem
 
   subject {
     common_name  = "tiller"
@@ -104,19 +104,15 @@ resource "tls_cert_request" "tiller" {
     "127.0.0.1",
   ]
 
-  dns_names = ["${concat(
-    var.etcd_servers,
-    list(
-      "localhost",
-    ))}"]
+  dns_names = concat(var.etcd_servers, ["localhost"])
 }
 
 resource "tls_locally_signed_cert" "tiller" {
-  cert_request_pem = "${tls_cert_request.tiller.cert_request_pem}"
+  cert_request_pem = tls_cert_request.tiller.cert_request_pem
 
-  ca_key_algorithm   = "${join(" ", tls_self_signed_cert.helm_ca.*.key_algorithm)}"
-  ca_private_key_pem = "${join(" ", tls_private_key.helm_ca.*.private_key_pem)}"
-  ca_cert_pem        = "${join(" ", tls_self_signed_cert.helm_ca.*.cert_pem)}"
+  ca_key_algorithm   = join(" ", tls_self_signed_cert.helm_ca.*.key_algorithm)
+  ca_private_key_pem = join(" ", tls_private_key.helm_ca.*.private_key_pem)
+  ca_cert_pem        = join(" ", tls_self_signed_cert.helm_ca.*.cert_pem)
 
   validity_period_hours = 175200
 
