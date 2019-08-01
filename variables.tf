@@ -71,12 +71,6 @@ variable "cluster_domain_suffix" {
   default = "cluster.local"
 }
 
-variable "apiserver_vip" {
-  description = "VIP to use for apiserver HA via keepalived"
-  type        = "string"
-  default     = ""
-}
-
 variable "container_images" {
   description = "Container images to use"
   type = map(string)
@@ -111,18 +105,6 @@ variable "enable_aggregation" {
   description = "Enable the Kubernetes Aggregation Layer (defaults to false, recommended)"
   type = string
   default = "false"
-}
-
-variable "apiserver_extra_arguments" {
-  description = "List of extra arguments for the kube-apiserver"
-  type        = "list"
-  default     = []
-}
-
-variable "apiserver_extra_secrets" {
-  description = "Map of extra data to insert into the kube-apiserver Secrets (values must be BASE64 encoded)"
-  type        = "map"
-  default     = {}
 }
 
 # unofficial, temporary, may be removed without notice
