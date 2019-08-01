@@ -43,7 +43,7 @@ data:
   check-apiserver.sh: |
     #!/bin/bash
     SA_DIR=/run/secrets/kubernetes.io/serviceaccount
-    exec curl --silent --fail --cacert "$SA_DIR/ca.crt" -H "Authorization: Bearer $(cat $SA_DIR/token)" https://127.0.0.1:${apiserver_port}/healthz
+    exec curl --silent --fail --cacert "$SA_DIR/ca.crt" -H "Authorization: Bearer $(cat $SA_DIR/token)" https://127.0.0.1:6443/healthz
   check-health.sh: |
     #!/bin/bash
     set -xo pipefail
