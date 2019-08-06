@@ -49,8 +49,7 @@ resource "template_dir" "apiserver-vip-manifests" {
   destination_dir = "${var.asset_dir}/manifests-apiserver-vip"
 
   vars = {
-    apiserver_vip  = var.apiserver_vip
-    apiserver_port = var.apiserver_port
+    apiserver_vip = var.apiserver_vip
 
     keepalived_vip_image = var.container_images["keepalived_vip"]
   }
