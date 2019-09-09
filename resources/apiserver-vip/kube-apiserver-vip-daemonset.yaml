@@ -65,9 +65,9 @@ spec:
             exec:
               command:
                 - /check-health.sh
-            initialDelaySeconds: 10
+            initialDelaySeconds: 20
             periodSeconds: 5
-            failureThreshold: 1
+            failureThreshold: 2
             successThreshold: 1
       volumes:
         - name: modules

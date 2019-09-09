@@ -20,6 +20,7 @@ data:
       interval 5
       timeout 30
       init_fail
+      fall 3
     }
 
     vrrp_instance vips {
