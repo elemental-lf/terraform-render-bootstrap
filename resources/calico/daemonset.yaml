@@ -133,8 +133,13 @@ spec:
               value: "info"
             - name: FELIX_HEALTHENABLED
               value: "true"
+            - name: FELIX_PROMETHEUSMETRICSENABLED
+              value: "true"
           securityContext:
             privileged: true
+          ports:
+            - name: metrics
+              containerPort: 9091
           resources:
             requests:
               cpu: 150m
