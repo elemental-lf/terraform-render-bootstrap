@@ -11,6 +11,11 @@ resource "template_dir" "static-manifests" {
     service_cidr      = var.service_cidr
     trusted_certs_dir = var.trusted_certs_dir
     aggregation_flags = var.enable_aggregation ? indent(4, local.aggregation_flags) : ""
+
+    # DUAL
+    apiserver_extra_arguments = indent(4, join("\n", formatlist("- \"%s\"", var.apiserver_extra_arguments)))
+    apiserver_vip = var.apiserver_vip
+    keepalived_vip_image = var.container_images["keepalived_vip"]
   }
 }
 
@@ -27,7 +32,6 @@ resource "template_dir" "manifests" {
     cluster_domain_suffix  = var.cluster_domain_suffix
     cluster_dns_service_ip = cidrhost(var.service_cidr, 10)
     trusted_certs_dir      = var.trusted_certs_dir
-    apiserver_extra_arguments = indent(8, join("\n", formatlist("- \"%s\"", var.apiserver_extra_arguments)))
     server                 = format("https://%s:%s", var.api_servers[0], var.external_apiserver_port)
   }
 }
