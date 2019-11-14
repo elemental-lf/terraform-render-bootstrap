@@ -3,7 +3,6 @@
 variable "apiserver_vip" {
   description = "VIP to use for apiserver HA via keepalived"
   type        = "string"
-  default     = ""
 }
 
 variable "apiserver_extra_arguments" {
