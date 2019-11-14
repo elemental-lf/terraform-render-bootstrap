@@ -53,6 +53,9 @@ spec:
     - name: ssl-certs-host
       mountPath: /etc/ssl/certs
       readOnly: true
+    - name: extra-assets-apiserver
+      mountPath: /etc/kubernetes/extra-assets/apiserver
+      readOnly: true
   volumes:
   - name: secrets
     hostPath:
@@ -60,3 +63,7 @@ spec:
   - name: ssl-certs-host
     hostPath:
       path: ${trusted_certs_dir}
+  - name: extra-assets-apiserver
+    hostPath:
+      path: /etc/kubernetes/extra-assets/apiserver
+      type: DirectoryOrCreate

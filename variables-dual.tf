@@ -11,9 +11,3 @@ variable "apiserver_extra_arguments" {
   type        = "list"
   default     = []
 }
-
-variable "apiserver_extra_secrets" {
-  description = "Map of extra data to insert into the kube-apiserver Secrets (values must be BASE64 encoded)"
-  type        = "map"
-  default     = {}
-}
