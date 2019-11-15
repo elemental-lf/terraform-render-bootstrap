@@ -2,11 +2,11 @@
 
 variable "apiserver_vip" {
   description = "VIP to use for apiserver HA via keepalived"
-  type        = "string"
+  type        = string
 }
 
 variable "apiserver_extra_arguments" {
   description = "List of extra arguments for the kube-apiserver"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
