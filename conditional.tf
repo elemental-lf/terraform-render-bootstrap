@@ -42,15 +42,3 @@ resource "template_dir" "kube-router-manifests" {
     network_mtu       = var.network_mtu
   }
 }
-
-resource "template_dir" "apiserver-vip-manifests" {
-  count           = var.apiserver_vip != "" ? 1 : 0
-  source_dir      = "${path.module}/resources/apiserver-vip"
-  destination_dir = "${var.asset_dir}/manifests-apiserver-vip"
-
-  vars = {
-    apiserver_vip = var.apiserver_vip
-
-    keepalived_vip_image = var.container_images["keepalived_vip"]
-  }
-}
