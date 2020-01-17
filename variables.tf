@@ -16,6 +16,7 @@ variable "etcd_servers" {
 variable "asset_dir" {
   type        = string
   description = "Absolute path to a directory where generated assets should be placed (contains secrets)"
+  default     = ""
 }
 
 variable "cloud_provider" {
@@ -55,12 +56,12 @@ variable "pod_cidr" {
 }
 
 variable "service_cidr" {
-  type    = string
+  type        = string
   description = <<EOD
 CIDR IP range to assign Kubernetes services.
 The 1st IP will be reserved for kube_apiserver, the 10th IP will be reserved for kube-dns.
 EOD
-  default = "10.3.0.0/24"
+  default     = "10.3.0.0/24"
 }
 
 
@@ -69,13 +70,13 @@ variable "container_images" {
   description = "Container images to use"
 
   default = {
-    calico      = "quay.io/calico/node:v3.9.3"
-    calico_cni  = "quay.io/calico/cni:v3.9.3"
+    calico      = "quay.io/calico/node:v3.11.1"
+    calico_cni  = "quay.io/calico/cni:v3.11.1"
     flannel     = "quay.io/coreos/flannel:v0.11.0-amd64"
     flannel_cni = "quay.io/coreos/flannel-cni:v0.3.0"
     kube_router = "cloudnativelabs/kube-router:v0.3.2"
-    hyperkube   = "k8s.gcr.io/hyperkube:v1.16.3"
-    coredns     = "k8s.gcr.io/coredns:1.6.2"
+    hyperkube   = "k8s.gcr.io/hyperkube:v1.17.1"
+    coredns     = "k8s.gcr.io/coredns:1.6.6"
     keepalived_vip   = "osixia/keepalived:2.0.17"
     tiller           = "gcr.io/kubernetes-helm/tiller:v2.16.1"
   }

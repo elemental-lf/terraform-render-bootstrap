@@ -46,6 +46,9 @@ spec:
       valueFrom:
         fieldRef:
           fieldPath: status.podIP
+    resources:
+      requests:
+        cpu: 150m
     volumeMounts:
     - name: secrets
       mountPath: /etc/kubernetes/secrets
