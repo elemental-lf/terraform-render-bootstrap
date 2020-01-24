@@ -33,7 +33,7 @@ spec:
         operator: Exists
       containers:
       - name: kube-proxy
-        image: ${hyperkube_image}
+        image: ${kube_proxy_image}
         command:
         - ./hyperkube
         - kube-proxy

@@ -16,7 +16,7 @@ spec:
     runAsUser: 65534
   containers:
   - name: kube-scheduler
-    image: ${hyperkube_image}
+    image: ${kube_scheduler_image}
     command:
     - /hyperkube
     - kube-scheduler
