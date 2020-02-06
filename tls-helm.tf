@@ -1,29 +1,39 @@
 # ca.crt
 resource "local_file" "helm_ca_crt" {
+  count = var.asset_dir == "" ? 0 : 1
+
   content  = tls_self_signed_cert.helm_ca.cert_pem
   filename = "${var.asset_dir}/tls/helm/ca.crt"
 }
 
 # client.crt
 resource "local_file" "helm_client_crt" {
+  count = var.asset_dir == "" ? 0 : 1
+
   content  = tls_locally_signed_cert.helm_client.cert_pem
   filename = "${var.asset_dir}/tls/helm/client.crt"
 }
 
 # client.key
 resource "local_file" "helm_client_key" {
+  count = var.asset_dir == "" ? 0 : 1
+
   content  = tls_private_key.helm_client.private_key_pem
   filename = "${var.asset_dir}/tls/helm/client.key"
 }
 
 # tiller.crt
 resource "local_file" "tiller_crt" {
+  count = var.asset_dir == "" ? 0 : 1
+
   content  = tls_locally_signed_cert.tiller.cert_pem
   filename = "${var.asset_dir}/tls/helm/tiller.crt"
 }
 
 # tiller.key
 resource "local_file" "tiller_key" {
+  count = var.asset_dir == "" ? 0 : 1
+
   content  = tls_private_key.tiller.private_key_pem
   filename = "${var.asset_dir}/tls/helm/tiller.key"
 }

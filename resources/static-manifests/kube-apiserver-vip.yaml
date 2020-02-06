@@ -43,10 +43,11 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
     - name: kube-keepalived-vip-liveness
-      image: ${hyperkube_image}
+      image: ${kube_apiserver_image}
       imagePullPolicy: Always
+      command:
+        - "/bin/sleep"
       args:
-        - "sleep"
         - "365d"
       securityContext:
         privileged: true
