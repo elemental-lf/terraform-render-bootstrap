@@ -19,8 +19,8 @@ locals {
   "${path.module}/resources/apiserver-vip/${name}",
   {
     apiserver_vip = var.apiserver_vip
-    apiserver_vip_interface = "bond0"
-    apiserver_vip_vrrp_id = 178
+    apiserver_vip_interface = var.apiserver_vip_interface
+    apiserver_vip_vrrp_id = var.apiserver_vip_vrrp_id
   }
   )
   }
