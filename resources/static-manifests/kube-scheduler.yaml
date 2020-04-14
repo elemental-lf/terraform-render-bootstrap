@@ -18,7 +18,6 @@ spec:
   - name: kube-scheduler
     image: ${kube_scheduler_image}
     command:
-    - /hyperkube
     - kube-scheduler
     - --kubeconfig=/etc/kubernetes/secrets/kubeconfig
     - --leader-elect=true

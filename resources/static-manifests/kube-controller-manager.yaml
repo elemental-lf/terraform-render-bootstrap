@@ -18,7 +18,6 @@ spec:
   - name: kube-controller-manager
     image: ${kube_controller_manager_image}
     command:
-    - /hyperkube
     - kube-controller-manager
     - --allocate-node-cidrs=true
     - --cloud-provider=${cloud_provider}

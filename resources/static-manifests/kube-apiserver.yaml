@@ -18,7 +18,6 @@ spec:
   - name: kube-apiserver
     image: ${kube_apiserver_image}
     command:
-    - /hyperkube
     - kube-apiserver
     - --advertise-address=$(POD_IP)
     - --allow-privileged=true
