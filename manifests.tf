@@ -9,6 +9,7 @@ locals {
         kube_apiserver_image          = var.container_images["kube_apiserver"]
         kube_controller_manager_image = var.container_images["kube_controller_manager"]
         kube_scheduler_image          = var.container_images["kube_scheduler"]
+        kubelet_image                 = var.container_images["kubelet"]
 
         etcd_servers      = join(",", formatlist("https://%s:2379", var.etcd_servers))
         cloud_provider    = var.cloud_provider
