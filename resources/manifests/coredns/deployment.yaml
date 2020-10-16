@@ -21,10 +21,15 @@ spec:
       labels:
         tier: control-plane
         k8s-app: coredns
-      annotations:
-        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: node.kubernetes.io/controller
+                operator: Exists
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -41,9 +46,12 @@ spec:
                   - coredns
               topologyKey: kubernetes.io/hostname
       priorityClassName: system-cluster-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: coredns
       tolerations:
-        - key: node-role.kubernetes.io/master
+        - key: node-role.kubernetes.io/controller
           effect: NoSchedule
       affinity:
         podAntiAffinity:

@@ -197,35 +197,3 @@ resource "tls_cert_request" "kubelet" {
     organization = "system:nodes"
   }
 }
-
-resource "tls_locally_signed_cert" "kubelet" {
-  cert_request_pem = tls_cert_request.kubelet.cert_request_pem
-
-  ca_key_algorithm   = tls_self_signed_cert.kube-ca.key_algorithm
-  ca_private_key_pem = tls_private_key.kube-ca.private_key_pem
-  ca_cert_pem        = tls_self_signed_cert.kube-ca.cert_pem
-
-  validity_period_hours = 175200
-
-  allowed_uses = [
-    "key_encipherment",
-    "digital_signature",
-    "server_auth",
-    "client_auth",
-  ]
-}
-
-resource "local_file" "kubelet-key" {
-  count = var.asset_dir == "" ? 0 : 1
-
-  content  = tls_private_key.kubelet.private_key_pem
-  filename = "${var.asset_dir}/tls/kubelet.key"
-}
-
-resource "local_file" "kubelet-crt" {
-  count = var.asset_dir == "" ? 0 : 1
-
-  content  = tls_locally_signed_cert.kubelet.cert_pem
-  filename = "${var.asset_dir}/tls/kubelet.crt"
-}
-

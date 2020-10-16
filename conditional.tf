@@ -40,19 +40,35 @@ locals {
     if var.networking == "calico"
   }
 
-  # kube-router manifests map
+  # cilium manifests map
   # { manifests-networking/manifest.yaml => content }
-  kube_router_manifests = {
-    for name in fileset("${path.module}/resources/kube-router", "*.yaml") :
+  cilium_manifests = {
+    for name in fileset("${path.module}/resources/cilium", "**/*.yaml") :
     "manifests-networking/${name}" => templatefile(
-      "${path.module}/resources/kube-router/${name}",
+      "${path.module}/resources/cilium/${name}",
       {
-        kube_router_image     = var.container_images["kube_router"]
-        flannel_cni_image     = var.container_images["flannel_cni"]
-        network_mtu           = var.network_mtu
+        cilium_agent_image    = var.container_images["cilium_agent"]
+        cilium_operator_image = var.container_images["cilium_operator"]
+        pod_cidr              = var.pod_cidr
         daemonset_tolerations = var.daemonset_tolerations
       }
     )
-    if var.networking == "kube-router"
+    if var.networking == "cilium"
   }
+}
+
+# flannel manifests
+resource "local_file" "flannel-manifests" {
+  for_each = var.asset_dir == "" ? {} : local.flannel_manifests
+
+  filename = "${var.asset_dir}/${each.key}"
+  content  = each.value
+}
+
+# Calico manifests
+resource "local_file" "calico-manifests" {
+  for_each = var.asset_dir == "" ? {} : local.calico_manifests
+
+  filename = "${var.asset_dir}/${each.key}"
+  content  = each.value
 }

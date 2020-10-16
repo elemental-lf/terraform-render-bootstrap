@@ -17,14 +17,15 @@ spec:
     metadata:
       labels:
         k8s-app: flannel
-      annotations:
-        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       hostNetwork: true
       priorityClassName: system-node-critical
       serviceAccountName: flannel
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       tolerations:
-      - key: node-role.kubernetes.io/master
+      - key: node-role.kubernetes.io/controller
         operator: Exists
       - key: node.kubernetes.io/not-ready
         operator: Exists
@@ -32,6 +33,21 @@ spec:
       - key: ${key}
         operator: Exists
       %{~ endfor ~}
+      initContainers:
+        - name: install-cni
+          image: ${flannel_cni_image}
+          command: ["/install-cni.sh"]
+          env:
+            - name: CNI_NETWORK_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: flannel-config
+                  key: cni-conf.json
+          volumeMounts:
+            - name: cni-bin-dir
+              mountPath: /host/opt/cni/bin/
+            - name: cni-conf-dir
+              mountPath: /host/etc/cni/net.d
       containers:
         - name: flannel
           image: ${flannel_image}
@@ -59,20 +75,8 @@ spec:
               mountPath: /etc/kube-flannel/
             - name: run-flannel
               mountPath: /run/flannel
-        - name: install-cni
-          image: ${flannel_cni_image}
-          command: ["/install-cni.sh"]
-          env:
-            - name: CNI_NETWORK_CONFIG
-              valueFrom:
-                configMapKeyRef:
-                  name: flannel-config
-                  key: cni-conf.json
-          volumeMounts:
-            - name: cni-bin-dir
-              mountPath: /host/opt/cni/bin/
-            - name: cni-conf-dir
-              mountPath: /host/etc/cni/net.d
+            - name: xtables-lock
+              mountPath: /run/xtables.lock
       volumes:
         - name: flannel-config
           configMap:
@@ -87,3 +91,8 @@ spec:
         - name: cni-conf-dir
           hostPath:
             path: /etc/kubernetes/cni/net.d
+        # Access iptables concurrently
+        - name: xtables-lock
+          hostPath:
+            type: FileOrCreate
+            path: /run/xtables.lock

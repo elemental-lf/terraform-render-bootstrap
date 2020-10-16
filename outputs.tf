@@ -5,7 +5,7 @@ output "cluster_dns_service_ip" {
 
 // Generated kubeconfig for Kubelets (i.e. lower privilege than admin)
 output "kubeconfig-kubelet" {
-  value     = data.template_file.kubeconfig-kubelet.rendered
+  value     = data.template_file.kubeconfig-bootstrap.rendered
   sensitive = true
 }
 
@@ -28,7 +28,7 @@ output "assets_dist" {
     local.manifests,
     local.flannel_manifests,
     local.calico_manifests,
-    local.kube_router_manifests,
+    local.cilium_manifests,
     # DUAL
     local.helm_manifests,
     local.extra_assert_apiserver_vip,

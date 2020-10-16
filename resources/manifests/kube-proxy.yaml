@@ -20,14 +20,15 @@ spec:
       labels:
         tier: node
         k8s-app: kube-proxy
-      annotations:
-        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       hostNetwork: true
       priorityClassName: system-node-critical
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: kube-proxy
       tolerations:
-      - key: node-role.kubernetes.io/master
+      - key: node-role.kubernetes.io/controller
         operator: Exists
       - key: node.kubernetes.io/not-ready
         operator: Exists
@@ -73,6 +74,8 @@ spec:
         - name: ssl-certs-host
           mountPath: /etc/ssl/certs
           readOnly: true
+        - name: xtables-lock
+          mountPath: /run/xtables.lock
       volumes:
       - name: kubeconfig
         configMap:
@@ -83,3 +86,8 @@ spec:
       - name: ssl-certs-host
         hostPath:
           path: ${trusted_certs_dir}
+      # Access iptables concurrently
+      - name: xtables-lock
+        hostPath:
+          type: FileOrCreate
+          path: /run/xtables.lock

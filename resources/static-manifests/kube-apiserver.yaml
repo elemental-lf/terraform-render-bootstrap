@@ -6,14 +6,14 @@ metadata:
   labels:
     k8s-app: kube-apiserver
     tier: control-plane
-  annotations:
-    seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
 spec:
   hostNetwork: true
   priorityClassName: system-cluster-critical
   securityContext:
     runAsNonRoot: true
     runAsUser: 65534
+    seccompProfile:
+      type: RuntimeDefault
   containers:
   - name: kube-apiserver
     image: ${kube_apiserver_image}
@@ -22,8 +22,10 @@ spec:
     - --advertise-address=$(POD_IP)
     - --allow-privileged=true
     - --anonymous-auth=false
-    - --authorization-mode=RBAC
+    - --authorization-mode=Node,RBAC
     - --client-ca-file=/etc/kubernetes/secrets/ca.crt
+    - --enable-admission-plugins=NodeRestriction
+    - --enable-bootstrap-token-auth=true
     - --cloud-provider=${cloud_provider}
     - --etcd-cafile=/etc/kubernetes/secrets/etcd-client-ca.crt
     - --etcd-certfile=/etc/kubernetes/secrets/etcd-client.crt

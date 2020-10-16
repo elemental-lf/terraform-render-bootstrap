@@ -27,13 +27,13 @@ variable "cloud_provider" {
 
 variable "networking" {
   type        = string
-  description = "Choice of networking provider (flannel or calico or kube-router)"
+  description = "Choice of networking provider (flannel or calico or cilium)"
   default     = "flannel"
 }
 
 variable "network_mtu" {
   type        = number
-  description = "CNI interface MTU (only applies to calico and kube-router)"
+  description = "CNI interface MTU (only applies to calico)"
   default     = 1500
 }
 
@@ -70,18 +70,18 @@ variable "container_images" {
   description = "Container images to use"
 
   default = {
-    calico                  = "quay.io/calico/node:v3.13.3"
-    calico_cni              = "quay.io/calico/cni:v3.13.3"
-    coredns                 = "k8s.gcr.io/coredns:1.6.7"
-    flannel                 = "quay.io/coreos/flannel:v0.13.0-amd64"
-    flannel_cni             = "quay.io/coreos/flannel-cni:v0.3.0"
-    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.18.2"
-    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.18.2"
-    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.18.2"
-    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.18.2"
-    kubelet                 = "quay.io/poseidon/kubelet:v1.18.2"
+    calico                  = "quay.io/calico/node:v3.16.3"
+    calico_cni              = "quay.io/calico/cni:v3.16.3"
+    coredns                 = "k8s.gcr.io/coredns:1.7.0"
+    flannel                 = "quay.io/coreos/flannel:v0.13.0"
+    flannel_cni             = "quay.io/poseidon/flannel-cni:v0.4.1"
+    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.19.3"
+    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.19.3"
+    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.19.3"
+    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.19.3"
     # experimental
-    kube_router = "cloudnativelabs/kube-router:v0.3.2"
+    cilium_agent    = "docker.io/cilium/cilium:v1.8.4"
+    cilium_operator = "docker.io/cilium/operator-generic:v1.8.4"
     #
     keepalived_vip   = "osixia/keepalived:2.0.17"
     tiller           = "gcr.io/kubernetes-helm/tiller:v2.16.1"
