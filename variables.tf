@@ -13,12 +13,6 @@ variable "etcd_servers" {
   description = "List of URLs used to reach etcd servers."
 }
 
-variable "asset_dir" {
-  type        = string
-  description = "Absolute path to a directory where generated assets should be placed (contains secrets)"
-  default     = ""
-}
-
 variable "cloud_provider" {
   type        = string
   description = "The provider for cloud services (empty string for no provider)"
@@ -70,15 +64,17 @@ variable "container_images" {
   description = "Container images to use"
 
   default = {
-    calico                  = "quay.io/calico/node:v3.16.3"
-    calico_cni              = "quay.io/calico/cni:v3.16.3"
+    calico                  = "quay.io/calico/node:v3.16.5"
+    calico_cni              = "quay.io/calico/cni:v3.16.5"
+    cilium_agent            = "quay.io/cilium/cilium:v1.9.0"
+    cilium_operator         = "quay.io/cilium/operator-generic:v1.9.0"
     coredns                 = "k8s.gcr.io/coredns:1.7.0"
     flannel                 = "quay.io/coreos/flannel:v0.13.0"
     flannel_cni             = "quay.io/poseidon/flannel-cni:v0.4.1"
-    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.19.3"
-    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.19.3"
-    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.19.3"
-    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.19.3"
+    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.19.4"
+    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.19.4"
+    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.19.4"
+    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.19.4"
     # experimental
     cilium_agent    = "docker.io/cilium/cilium:v1.8.4"
     cilium_operator = "docker.io/cilium/operator-generic:v1.8.4"
