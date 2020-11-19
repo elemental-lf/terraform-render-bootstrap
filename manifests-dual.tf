@@ -26,16 +26,3 @@ locals {
   }
 }
 
-resource "local_file" "helm-manifests" {
-  for_each = var.asset_dir == "" ? {} : local.helm_manifests
-
-  content  = each.value
-  filename = "${var.asset_dir}/${each.key}"
-}
-
-resource "local_file" "extra-assets-apiserver-vip" {
-  for_each = var.asset_dir == "" ? {} : local.extra_assert_apiserver_vip
-
-  content  = each.value
-  filename = "${var.asset_dir}/${each.key}"
-}

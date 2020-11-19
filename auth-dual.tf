@@ -20,9 +20,3 @@ data "template_file" "kubeconfig-admin-localhost" {
   }
 }
 
-resource "local_file" "kubeconfig-admin-localhost" {
-  count = var.asset_dir == "" ? 0 : 1
-
-  content  = data.template_file.kubeconfig-admin-localhost.rendered
-  filename = "${var.asset_dir}/auth/kubeconfig-localhost"
-}
