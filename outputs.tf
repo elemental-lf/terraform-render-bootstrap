@@ -30,7 +30,6 @@ output "assets_dist" {
     local.calico_manifests,
     local.cilium_manifests,
     # DUAL
-    local.helm_manifests,
     local.extra_assert_apiserver_vip,
     local.auth_kubeconfigs_dual,
   )

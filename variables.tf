@@ -80,7 +80,6 @@ variable "container_images" {
     cilium_operator = "docker.io/cilium/operator-generic:v1.8.4"
     #
     keepalived_vip   = "osixia/keepalived:2.0.17"
-    tiller           = "gcr.io/kubernetes-helm/tiller:v2.16.1"
   }
 }
 
