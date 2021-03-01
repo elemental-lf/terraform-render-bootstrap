@@ -93,5 +93,5 @@ spec:
         type: File
     - name: kubeconfig
       hostPath:
-        path: /etc/kubernetes/bootstrap-secrets/kubeconfig-localhost
+        path: /etc/kubernetes/pki/kubeconfig-localhost
         type: File
