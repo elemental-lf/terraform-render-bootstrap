@@ -76,10 +76,11 @@ variable "container_images" {
     kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.20.4"
     kube_proxy              = "k8s.gcr.io/kube-proxy:v1.20.4"
     # experimental
-    cilium_agent    = "docker.io/cilium/cilium:v1.8.4"
-    cilium_operator = "docker.io/cilium/operator-generic:v1.8.4"
+    cilium_agent            = "docker.io/cilium/cilium:v1.8.4"
+    cilium_operator         = "docker.io/cilium/operator-generic:v1.8.4"
     #
-    keepalived_vip   = "osixia/keepalived:2.0.17"
+    kubelet                 = "quay.io/poseidon/kubelet:v1.20.4"
+    keepalived_vip          = "osixia/keepalived:2.0.17"
   }
 }
 
