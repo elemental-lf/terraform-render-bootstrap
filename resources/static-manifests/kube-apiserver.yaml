@@ -42,7 +42,6 @@ spec:
     - --service-cluster-ip-range=${service_cidr}
     - --tls-cert-file=/etc/kubernetes/pki/apiserver.crt
     - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
-    - --feature-gates=TTLAfterFinished=true
     ${apiserver_extra_arguments}
     env:
     - name: POD_IP
