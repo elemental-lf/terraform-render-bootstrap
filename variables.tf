@@ -13,12 +13,6 @@ variable "etcd_servers" {
   description = "List of URLs used to reach etcd servers."
 }
 
-variable "cloud_provider" {
-  type        = string
-  description = "The provider for cloud services (empty string for no provider)"
-  default     = ""
-}
-
 variable "networking" {
   type        = string
   description = "Choice of networking provider (flannel or calico or cilium)"
@@ -64,22 +58,19 @@ variable "container_images" {
   description = "Container images to use"
 
   default = {
-    calico                  = "quay.io/calico/node:v3.17.3"
-    calico_cni              = "quay.io/calico/cni:v3.17.3"
-    cilium_agent            = "quay.io/cilium/cilium:v1.9.4"
-    cilium_operator         = "quay.io/cilium/operator-generic:v1.9.4"
-    coredns                 = "k8s.gcr.io/coredns:1.7.0"
+    calico                  = "quay.io/calico/node:v3.19.1"
+    calico_cni              = "quay.io/calico/cni:v3.19.1"
+    cilium_agent            = "quay.io/cilium/cilium:v1.10.3"
+    cilium_operator         = "quay.io/cilium/operator-generic:v1.10.3"
+    coredns                 = "k8s.gcr.io/coredns/coredns:v1.8.4"
     flannel                 = "quay.io/coreos/flannel:v0.13.0"
     flannel_cni             = "quay.io/poseidon/flannel-cni:v0.4.2"
-    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.20.4"
-    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.20.4"
-    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.20.4"
-    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.20.4"
-    # experimental
-    cilium_agent            = "docker.io/cilium/cilium:v1.8.4"
-    cilium_operator         = "docker.io/cilium/operator-generic:v1.8.4"
+    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.21.3"
+    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.21.3"
+    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.21.3"
+    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.21.3"
     #
-    kubelet                 = "quay.io/poseidon/kubelet:v1.20.4"
+    kubelet                 = "quay.io/poseidon/kubelet:v1.21.3"
     keepalived_vip          = "osixia/keepalived:2.0.17"
   }
 }
@@ -103,6 +94,12 @@ variable "enable_aggregation" {
   default     = false
 }
 
+variable "daemonset_tolerations" {
+  type        = list(string)
+  description = "List of additional taint keys kube-system DaemonSets should tolerate (e.g. ['custom-role', 'gpu-role'])"
+  default     = []
+}
+
 # unofficial, temporary, may be removed without notice
 
 variable "external_apiserver_port" {
@@ -116,10 +113,3 @@ variable "cluster_domain_suffix" {
   description = "Queries for domains with the suffix will be answered by kube-dns"
   default     = "cluster.local"
 }
-
-variable "daemonset_tolerations" {
-  type        = list(string)
-  description = "List of additional taint keys kube-system DaemonSets should tolerate (e.g. ['custom-role', 'gpu-role'])"
-  default     = []
-}
-

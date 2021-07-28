@@ -12,7 +12,6 @@ locals {
         kubelet_image                 = var.container_images["kubelet"]
 
         etcd_servers      = join(",", formatlist("https://%s:2379", var.etcd_servers))
-        cloud_provider    = var.cloud_provider
         pod_cidr          = var.pod_cidr
         service_cidr      = var.service_cidr
         trusted_certs_dir = var.trusted_certs_dir
@@ -42,8 +41,8 @@ locals {
         trusted_certs_dir      = var.trusted_certs_dir
         server                 = format("https://%s:%s", var.api_servers[0], var.external_apiserver_port)
         daemonset_tolerations  = var.daemonset_tolerations
-        token_id               = random_string.bootstrap-token-id.result
-        token_secret           = random_string.bootstrap-token-secret.result
+        token_id               = random_password.bootstrap-token-id.result
+        token_secret           = random_password.bootstrap-token-secret.result
       }
     )
   }
