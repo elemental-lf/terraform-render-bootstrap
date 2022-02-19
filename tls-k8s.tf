@@ -65,6 +65,7 @@ resource "tls_cert_request" "apiserver" {
     cidrhost(var.service_cidr, 1),
     "127.0.0.1",
     "::1",
+    var.apiserver_vip,
   ]
 }
 
