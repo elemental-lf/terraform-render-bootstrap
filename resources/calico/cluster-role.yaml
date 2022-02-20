@@ -66,6 +66,7 @@ rules:
       - globalbgpconfigs
       - bgpconfigurations
       - ippools
+      - ipreservations
       - ipamblocks
       - globalnetworkpolicies
       - globalnetworksets
@@ -74,6 +75,7 @@ rules:
       - clusterinformations
       - hostendpoints
       - blockaffinities
+      - caliconodestatuses
     verbs:
       - get
       - list
@@ -86,6 +88,12 @@ rules:
       - clusterinformations
     verbs:
       - create
+      - update
+  # Calico must update some CRDs
+  - apiGroups: [ "crd.projectcalico.org" ]
+    resources:
+      - caliconodestatuses
+    verbs:
       - update
   # Calico reads some info on nodes
   - apiGroups: [""]

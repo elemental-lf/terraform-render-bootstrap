@@ -13,6 +13,8 @@ variable "etcd_servers" {
   description = "List of URLs used to reach etcd servers."
 }
 
+# optional
+
 variable "networking" {
   type        = string
   description = "Choice of networking provider (flannel or calico or cilium)"
@@ -58,13 +60,6 @@ variable "container_images" {
   description = "Container images to use"
 }
 
-
-variable "trusted_certs_dir" {
-  type        = string
-  description = "Path to the directory on cluster nodes where trust TLS certs are kept"
-  default     = "/usr/share/ca-certificates"
-}
-
 variable "enable_reporting" {
   type        = bool
   description = "Enable usage or analytics reporting to upstream component owners (Tigera: Calico)"
@@ -73,8 +68,8 @@ variable "enable_reporting" {
 
 variable "enable_aggregation" {
   type        = bool
-  description = "Enable the Kubernetes Aggregation Layer (defaults to false, recommended)"
-  default     = false
+  description = "Enable the Kubernetes Aggregation Layer (defaults to true)"
+  default     = true
 }
 
 variable "daemonset_tolerations" {

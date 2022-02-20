@@ -139,6 +139,9 @@ spec:
               value: "true"
             - name: FELIX_PROMETHEUSMETRICSENABLED
               value: "true"
+            # Detect iptables legacy or nft
+            - name: FELIX_IPTABLESBACKEND
+              value: "Auto"
           securityContext:
             privileged: true
           ports:

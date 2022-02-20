@@ -40,7 +40,7 @@ spec:
         image: ${cilium_agent_image}
         command:
           - sh
-          - -c
+          - -ec
           # The statically linked Go program binary is invoked to avoid any
           # dependency on utilities like sh and mount that can be missing on certain
           # distros installed on the underlying host. Copy the binary to the
@@ -64,22 +64,11 @@ spec:
         image: ${cilium_agent_image}
         command:
         - /init-container.sh
-        env:
-        - name: CILIUM_WAIT_BPF_MOUNT
-          valueFrom:
-            configMapKeyRef:
-              name: cilium
-              key: wait-bpf-mount
-              optional: true
         securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
           privileged: true
         volumeMounts:
         - name: sys-fs-bpf
           mountPath: /sys/fs/bpf
-          mountPropagation: HostToContainer
         - name: var-run-cilium
           mountPath: /var/run/cilium
         # Required to mount cgroup filesystem from the host to cilium agent pod
@@ -123,10 +112,6 @@ spec:
               command:
               - /cni-uninstall.sh
         securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
-            - SYS_MODULE
           privileged: true
         livenessProbe:
           exec:
@@ -162,6 +147,7 @@ spec:
           mountPath: /var/run/cilium
         - name: sys-fs-bpf
           mountPath: /sys/fs/bpf
+          mountPropagation: Bidirectional
         # Configuration
         - name: config
           mountPath: /tmp/cilium/config-map
