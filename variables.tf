@@ -17,8 +17,13 @@ variable "etcd_servers" {
 
 variable "networking" {
   type        = string
-  description = "Choice of networking provider (flannel or calico or cilium)"
+  description = "Choice of networking provider (flannel or calico or cilium or none)"
   default     = "flannel"
+
+  validation {
+    condition     = contains(["flannel", "calico", "cilium", "none"], var.networking)
+    error_message = "The networking option must be set to either flannel, calico, cilium, or none."
+  }
 }
 
 variable "network_mtu" {
