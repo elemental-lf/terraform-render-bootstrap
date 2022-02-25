@@ -20,3 +20,9 @@ variable "apiserver_extra_arguments" {
   type        = list(string)
   default     = []
 }
+
+variable "enable_kube_proxy" {
+  description = "Enable kube-proxy daemon set"
+  type        = bool
+  default     = true
+}

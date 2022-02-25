@@ -42,7 +42,8 @@ locals {
         token_id               = random_string.bootstrap-token-id.result
         token_secret           = random_string.bootstrap-token-secret.result
       }
-    )
+    ) if (!can(regex("^kube-proxy.*\\.yaml$", name))
+            || (can(regex("^kube-proxy.*\\.yaml$", name)) && var.enable_kube_proxy))
   }
 }
 
