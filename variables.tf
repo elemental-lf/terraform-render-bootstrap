@@ -63,6 +63,20 @@ EOD
 variable "container_images" {
   type        = map(string)
   description = "Container images to use"
+
+  default = {
+    calico                  = "quay.io/calico/node:v3.22.2"
+    calico_cni              = "quay.io/calico/cni:v3.22.2"
+    cilium_agent            = "quay.io/cilium/cilium:v1.11.4"
+    cilium_operator         = "quay.io/cilium/operator-generic:v1.11.4"
+    coredns                 = "k8s.gcr.io/coredns/coredns:v1.8.6"
+    flannel                 = "quay.io/coreos/flannel:v0.15.1"
+    flannel_cni             = "quay.io/poseidon/flannel-cni:v0.4.2"
+    kube_apiserver          = "k8s.gcr.io/kube-apiserver:v1.24.0"
+    kube_controller_manager = "k8s.gcr.io/kube-controller-manager:v1.24.0"
+    kube_scheduler          = "k8s.gcr.io/kube-scheduler:v1.24.0"
+    kube_proxy              = "k8s.gcr.io/kube-proxy:v1.24.0"
+  }
 }
 
 variable "enable_reporting" {
