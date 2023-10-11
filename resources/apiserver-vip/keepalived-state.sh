@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+# docker-keepalived container image only contains /bin/sh
 
 TYPE="$1"
 NAME="$2"
