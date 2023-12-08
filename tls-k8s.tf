@@ -57,14 +57,16 @@ resource "tls_cert_request" "apiserver" {
     "kubernetes.default.svc",
     "kubernetes.default.svc.${var.cluster_domain_suffix}",
     "localhost",
+    var.apiserver_cert_dns_names,
   ])
 
-  ip_addresses = [
+  ip_addresses = flatten([
     cidrhost(var.service_cidr, 1),
     "127.0.0.1",
     "::1",
     var.apiserver_vip,
-  ]
+    var.apiserver_cert_ip_addresses,
+  ])
 }
 
 resource "tls_locally_signed_cert" "apiserver" {
