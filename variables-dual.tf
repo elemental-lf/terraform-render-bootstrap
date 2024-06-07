@@ -21,12 +21,6 @@ variable "apiserver_extra_arguments" {
   default     = []
 }
 
-variable "enable_kube_proxy" {
-  description = "Enable kube-proxy daemon set"
-  type        = bool
-  default     = true
-}
-
 variable "apiserver_cert_dns_names" {
   description = "List of additional DNS names to add to the kube-apiserver TLS certificate"
   type        = list(string)

@@ -5,7 +5,7 @@ locals {
   # { manifests-networking/manifest.yaml => content }
   flannel_manifests = {
     for name in fileset("${path.module}/resources/flannel", "*.yaml") :
-    "manifests-networking/${name}" => templatefile(
+    "manifests/network/${name}" => templatefile(
       "${path.module}/resources/flannel/${name}",
       {
         flannel_image         = var.container_images["flannel"]
@@ -14,14 +14,14 @@ locals {
         daemonset_tolerations = var.daemonset_tolerations
       }
     )
-    if var.networking == "flannel"
+    if var.components.enable && var.components.flannel.enable && var.networking == "flannel"
   }
 
   # calico manifests map
   # { manifests-networking/manifest.yaml => content }
   calico_manifests = {
     for name in fileset("${path.module}/resources/calico", "*.yaml") :
-    "manifests-networking/${name}" => templatefile(
+    "manifests/network/${name}" => templatefile(
       "${path.module}/resources/calico/${name}",
       {
         calico_image                    = var.container_images["calico"]
@@ -37,14 +37,14 @@ locals {
         daemonset_tolerations           = var.daemonset_tolerations
       }
     )
-    if var.networking == "calico"
+    if var.components.enable && var.components.calico.enable && var.networking == "calico"
   }
 
   # cilium manifests map
   # { manifests-networking/manifest.yaml => content }
   cilium_manifests = {
     for name in fileset("${path.module}/resources/cilium", "**/*.yaml") :
-    "manifests-networking/${name}" => templatefile(
+    "manifests/network/${name}" => templatefile(
       "${path.module}/resources/cilium/${name}",
       {
         cilium_agent_image    = var.container_images["cilium_agent"]
@@ -53,7 +53,7 @@ locals {
         daemonset_tolerations = var.daemonset_tolerations
       }
     )
-    if var.networking == "cilium"
+    if var.components.enable && var.components.cilium.enable && var.networking == "cilium"
   }
 }
 

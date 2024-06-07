@@ -59,7 +59,6 @@ EOD
   default     = "10.3.0.0/24"
 }
 
-
 variable "container_images" {
   type        = map(string)
   description = "Container images to use"
@@ -95,4 +94,64 @@ variable "cluster_domain_suffix" {
   type        = string
   description = "Queries for domains with the suffix will be answered by kube-dns"
   default     = "cluster.local"
+}
+
+variable "components" {
+  description = "Configure pre-installed cluster components"
+  type = object({
+    enable = optional(bool, true)
+    coredns = optional(
+      object({
+        enable = optional(bool, true)
+      }),
+      {
+        enable = true
+      }
+    )
+    kube_proxy = optional(
+      object({
+        enable = optional(bool, true)
+      }),
+      {
+        enable = true
+      }
+    )
+    # CNI providers are enabled for pre-install by default, but only the
+    # provider matching var.networking is actually installed.
+    flannel = optional(
+      object({
+        enable = optional(bool, true)
+      }),
+      {
+        enable = true
+      }
+    )
+    calico = optional(
+      object({
+        enable = optional(bool, true)
+      }),
+      {
+        enable = true
+      }
+    )
+    cilium = optional(
+      object({
+        enable = optional(bool, true)
+      }),
+      {
+        enable = true
+      }
+    )
+  })
+  default = {
+    enable     = true
+    coredns    = null
+    kube_proxy = null
+    flannel    = null
+    calico     = null
+    cilium     = null
+  }
+  # Set the variable value to the default value when the caller
+  # sets it to null.
+  nullable = false
 }
